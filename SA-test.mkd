@@ -28,7 +28,7 @@
 
 #### Карточка товара
 
-**ID:** ФТ-1
+**ID:** ФТ-1</br>
 **Описание:** Для каждого товара должна выводиться карточка с данными:
 * Название товара
 * Кол-во товара
@@ -40,17 +40,17 @@
 
 #### Максимум позиций товаров в корзине
 
-**ID:** ФТ-2
+**ID:** ФТ-2</br>
 **Описание:** Максимум позиций товаров в корзине - 5.
 
 #### Лимиты единиц конкретного товара в корзине
 
-**ID:** ФТ-3
+**ID:** ФТ-3</br>
 **Описание:** Пользователь должен иметь возможность положить от 1 до 10 единиц товара в корзину.
 
 #### Общий максимум кол-ва единиц товаров в корзине.
 
-**ID:** ФТ-4
+**ID:** ФТ-4</br>
 **Описание:** Общее кол-во единиц товаров в корзине не должно превышать 20 единиц. 
 Если лимит превышен, то система должна выводить сообщение "В корзине может быть не более 20 единиц всех товаров.".
 При этом система не должна добавлять еще товар.
@@ -58,7 +58,7 @@
 
 #### Удаление товара из корзины
 
-**ID:** ФТ-5
+**ID:** ФТ-5</br>
 **Описание:** Пользователь должен иметь возможность убрать товар из корзины несколькими способами:
    * Снизив кол-во товара до 0 в корзине (например, с помощью кнопки "-1 шт.").
    * Нажав кнопку "удалить товар из корзины".
@@ -66,23 +66,143 @@
 
 #### Выбор товаров для оплаты
 
-**ID:** ФТ-6
+**ID:** ФТ-6</br>
 **Описание:** Пользователь должен иметь возможность выбрать из корзины какие-то конкретные товары либо все для оформления покупки.
 
 #### Переход к оплате товаров из корзины
 
-**ID:** ФТ-7
+**ID:** ФТ-7</br>
 **Описание:** Пользователь должен иметь возможность перейти к покупке: 
     * конкретного товара (кнопка "Купить товар" в карточке товара), 
     * несколько выбранных товаров (или все товары корзины, см. ФТ-6) с помощью кнопки "Перейти к оформлению".
 
 #### Реклама товаров
 
-**ID:** ФТ-8
+**ID:** ФТ-8</br>
 **Описание:** В корзине должна выводиться реклама товаров в будние дни с 6:00 до 11:00  и с 20:00 до 24:00.
 
 #### Изменение цены товара
 
-**ID:** ФТ-9
+**ID:** ФТ-9</br>
 **Описание:** Если цена на товар изменилась в каталоге, система должна автоматически обновить ее в корзине у всех пользователей. Система должна отправить пользователю уведомление, что цена на товар в его корзине изменилась.
+
+---
+
+## Задание 2. Проектирование API
+
+### Shop Partner API
+
+**Описание:** позволяет вывести список магазинов-партнеров. По умолчанию считается, что пользователь уже авторизовался в системе.
+
+#### Request
+
+**Method:** GET </br>
+**URL:** /api/partner-shops?city={city}</br>
+**Content-type:** application/json</br>
+
+**Request parameters:**
+
+| Name | Type | Description | Mandatory |
+| --- | --- | --- | --- |
+| city | string | City, specified by user at the registration. | yes |
+
+**Request URL Example:**
+```
+https://domain.tld/api/partner-shops?city=Moscow
+```
+
+#### Success Response
+
+**Success response parameters:**
+| Name | Type | Description | Mandatory |
+| --- | --- | --- | --- |
+| shops | Object | Object, containing sub-objects with info about on of the partnering shops. | Yes |
+
+**Shops sub-object parameters:**
+| Name | Type | Description | Mandatory |
+| --- | --- | --- | --- |
+| name | string | Name of the partnering shop. | Yes |
+| iconURL | string | Link to shop's logo icon. | Yes |
+| deliveryWindow | object | Object, containing info about the closest delivery window. See the table below for full info. | Yes |
+| hasFastDelivery | object | Flag that shows if the shop has fast delivery. | Yes |
+| deliveryDuration | object | Object, containing info about time for fast delivery. If `hasFastDelivery: false`, this object doesn't display. See the table below for full info. | No |
+| link | string |Link to shop's catalogue. | Yes |
+
+**deliveryWindow object parameters:**
+| Name | Type | Description | Mandatory |
+| --- | --- | --- | --- |
+| startTime | date&time | Start time of the closest delivery window with time zone. Format: `YYYY-MM-DDTHH:MM:SS+UTC(as HH:MM)` | Yes |
+| endTime | date&time | End time of the closest delivery window with time zone. Format: `YYYY-MM-DDTHH:MM:SS+UTC(as HH:MM)` | Yes |
+
+**deliveryDuration object parameters:**
+| Name | Type | Description | Mandatory |
+| --- | --- | --- | --- |
+| minMinutes | date&time | Minimum duration for fast delivery in minutes. Unix timestamp. | Yes |
+| maxMinutes | date&time | Maximum duration for fast delivery in minutes. Unix timestamp. | Yes |
+
+**NOTE:** If there's no shops in the specified city,  the system should return 200 OK and an empty `shops` object.
+
+**Success response example:**
+```
+HTTP Status Code: 200 OK
+{
+  "shops": [
+    {
+      "name": "METRO",
+      "iconUrl": "https://domain.tld/images/metroIcon.svg",
+      "deliveryWindow": {
+        "startTime": "2026-08-26T21:00:00+07:00",
+        "endTime": "2026-08-26T23:00:00+07:00"
+      },
+      "hasFastDelivery": false,
+      "url": "https://domain.tld/shops/Moscow/Metro"
+    },
+    {
+      "name": "ВкусВилл",
+      "iconUrl": "https://domain.tld/images/VkusVill.svg",
+      "deliveryWindow": {
+        "startTime": "2026-08-26T21:00:00+07:00",
+        "endTime": "2026-08-26T23:00:00+07:00"
+      },
+      "hasFastDelivery": true,
+      "deliveryDuration": {
+        "minMinutes": 20,
+        "maxMinutes": 60
+      },
+      "url": "https://domain.tld/shops/Moscow/VkusVill"
+    }
+  ]
+}
+```
+
+#### Error Response
+
+**Error response parameters:**
+| Name | Type | Description | Mandatory |
+| --- | --- | --- | --- |
+| HTTP Status Code | number(Integer) | HTTP Status Error code. | Yes |
+| code | string | Internal error code. | Yes | 
+| message | string | Error message. | Yes |
+
+**Error codes for ShopPartner API:**
+| HTTP Status Code | code | message |
+| --- | --- | --- |
+| 400 | MANDATORY_PARAMETER_MISSING | Mandatory parameters {parameter_name} are missing. |
+| 400 | CITY_INVALID | Parameter city is invalid. |
+| 404 | CITY_NOT_FOUND | The city {city} doesn't exist. |
+| 422 | --- | Invalid JSON. |
+| 500 | --- | Internal Server Error |
+
+**Error response example:**
+```
+HTTP Status Code: 404
+{
+   "code": "CITY_NOT_FOUND",
+   "message": "The city Atlantis doesn't exist"
+}
+```
+
+---
+
+## Задание 3. Архитектура
 
