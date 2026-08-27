@@ -206,3 +206,5 @@ HTTP Status Code: 404
 
 ## Задание 3. Архитектура
 
+<img width="687" height="202" alt="Архитектура drawio" src="https://github.com/user-attachments/assets/3902c48c-33fd-4395-b951-5c43ac13c822" />
+
