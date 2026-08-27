@@ -198,7 +198,7 @@ HTTP Status Code: 200 OK
 HTTP Status Code: 404
 {
    "code": "CITY_NOT_FOUND",
-   "message": "The city Atlantis doesn't exist"
+   "message": "The city Corinth doesn't exist"
 }
 ```
 
